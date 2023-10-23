@@ -32,6 +32,8 @@ wind_limits_new = [0,33,43,49,58,70,90]
 wind_max = 80
 hurr_cat = ['1','2','3','4','5']
 
+colournames = ['red','blue','green','plum','aquamarine','coral','blueviolet','indianred','lime','lightgoldenrodyellow','pink','lightblue','plum']*3+['black']
+
 def monthly_variability_with_obs(storms, years, months, runid_info, fontsize = 10, keys = [], years_obs=[]):
     """ 
     Plots monthly mean tropical storm counts for a set of
@@ -57,7 +59,7 @@ def monthly_variability_with_obs(storms, years, months, runid_info, fontsize = 1
 
         # Plot bar plot for observations and line for model results
         plt.bar(np.arange(1, len(months)+1), obs_monthly_count, 
-                align='center', color='blue', label='Observations')
+                align='center', color='black', label='Observations')
 
         for ir, runid in enumerate(runid_info['model']):
             for ia, algo in enumerate(runid_info['algo_type'][ir:ir+1]):
@@ -68,7 +70,7 @@ def monthly_variability_with_obs(storms, years, months, runid_info, fontsize = 1
                 #print('monthly ',runid, basin, model_monthly_count)
         
                 plt.plot(months, model_monthly_count, linewidth=3,
-                         label=runid+'-'+algo)        
+                         label=runid+'-'+algo, c=colournames[ir])        
         
                 # Add plot details and titles etc.
                 plt.title('%s' % tc_assess_code.BASIN_NAME.get(basin), fontsize = fontsize)  
@@ -1477,7 +1479,7 @@ def do_intensification_pdf(storms, runid_info, plot_dir, basins = ['nh'], do_obs
                 storms_runid = storms[(runid, key)]
                 data_freq = storms[(runid, key, 'freq')]
                 hist, edges = calculate_histogram_maxintens(storms_runid, vmax_range, basin = basin, variable = variable, data_freq=data_freq)
-                plot_latitude_histogram_nofig(hist, runid, algo, ax, edges = edges, x_label = 'Max intensification rate (/day)', title=title, plot_cat = plot_cat, ymax = ymax)
+                plot_latitude_histogram_nofig(hist, runid, algo, ax, edges = edges, x_label = 'Max intensification rate (/day)', title=title, plot_cat = plot_cat, ymax = ymax, color=colournames[ir])
 
     fig.subplots_adjust(bottom=0.08, left=0.08, right=0.95, top=0.92, wspace=0.27, hspace=0.27)
     models = '_'.join(runid_info['model'])
@@ -1532,7 +1534,7 @@ def do_intensification_24h_pdf(storms, runid_info, plot_dir, basins = ['nh'], do
                 key = keys[ir]
                 storms_runid = storms[(runid, key)]
                 hist, edges = calculate_histogram_maxintens_24h(storms_runid, vmax_range, basin = basin, variable = variable)
-                plot_latitude_histogram_nofig(hist, runid, algo, ax, edges = edges, x_label = 'Max intensification rate (/24h)', title=title, plot_cat = plot_cat, ymax = ymax)
+                plot_latitude_histogram_nofig(hist, runid, algo, ax, edges = edges, x_label = 'Max intensification rate (/24h)', title=title, plot_cat = plot_cat, ymax = ymax, color = colournames[ir])
                 #print('model, var, >15 ',runid, basin, variable, np.sum(hist[15:]))
 
     fig.subplots_adjust(bottom=0.08, left=0.08, right=0.95, top=0.92, wspace=0.27, hspace=0.27)
@@ -1591,7 +1593,7 @@ def do_1D_pdf(storms, runid_info, plot_dir, basins = ['nh'], do_obs = False, var
                 storms_runid = storms[(runid, key)]
                 data_freq = storms[(runid, key, 'freq')]
                 hist, edges = calculate_histogram_maxvmax(storms_runid, vmax_range, basin = basin, variable = variable, data_freq=data_freq)
-                plot_latitude_histogram_nofig(hist, runid, algo, ax, edges = edges, x_label = variable, title=title, plot_cat = plot_cat, ymax = ymax)
+                plot_latitude_histogram_nofig(hist, runid, algo, ax, edges = edges, x_label = variable, title=title, plot_cat = plot_cat, ymax = ymax, color=colournames[ir])
 
     fig.subplots_adjust(bottom=0.08, left=0.08, right=0.95, top=0.92, wspace=0.27, hspace=0.27)
     models = '_'.join(runid_info['model'])
