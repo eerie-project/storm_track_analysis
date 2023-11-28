@@ -19,7 +19,7 @@ import load_data.load_feature_file
 import load_data.load_TE_nc as load_TE_nc
 import load_data.get_tracks_from_mass
 import etc_calculate
-import tc_assessment
+import etc_assessment
 import tc_intensity
 import tc_interannual
 import tc_assess_code
