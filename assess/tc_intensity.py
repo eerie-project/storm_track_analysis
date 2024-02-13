@@ -1,3 +1,4 @@
+
 """ 
 Plots monthly variability of model tropical storms with
 corresponding observations. Produces one plot with 
@@ -532,7 +533,7 @@ def plot_hart_lifecycle(storms):
     ax.set_xlim(-25,25)
     ax.set_ylim(-25,25)
     #plt.show()
-        
+    close(fig)
 
 def plot_obs_mslp_wspeed(storms, ax, x_fit=[], y_fit = [], basin = 'nh', linewidth = 2.5, plot_scatter = True):
     for storm in storms:
@@ -720,6 +721,7 @@ def plot_latitude_histogram(histogram, runid, resols, model_desc, plot_dir, edge
     #plt.savefig(plot_filename)
     plt.savefig(plot_filename[:-3]+'png')
     #plt.show()    
+    close(fig)
 
 def plot_latitude_histogram_nofig(histogram, runid, resols, model_desc, plot_dir, ax, edges = [], x_label = 'Latitude', title='', paired = False, plot_cat = True, savefname = '', fig_no = 1):
     if edges == []:
@@ -988,6 +990,7 @@ def work(directory, years, months, datadir, basin, track_type, run_dict, plot_di
     plt.savefig(plot_filename)
     plt.savefig(plot_filename[:-3]+'png')
     plt.show()
+    close(fig)
     
     i = 0
     fig = plt.figure(figsize=[10,10], dpi=150)
@@ -1024,7 +1027,8 @@ def work(directory, years, months, datadir, basin, track_type, run_dict, plot_di
     plot_filename = plot_dir+'/intensity_mslp_wspeed_highresmip_resols_subplots.pdf'
     #plt.savefig(plot_filename)
     plt.savefig(plot_filename[:-3]+'png')
-        #plt.show()
+    #plt.show()
+    close(fig)
 
 
     # calc and plot intensity-lifetime

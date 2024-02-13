@@ -402,6 +402,7 @@ def _create_interann_plot(runids, runkeys, resols, annual_count_obs, \
         #print 'save fig ',plot_filename
         if show_plots:
             plt.show()    
+    plt.close(fig)
 
 def calculate_correlation_years(years_model, data_model, years_obs, data_obs):
     #print years_model[0], years_model[-1]
@@ -692,7 +693,7 @@ def _create_correlation_plot(runids, runkeys, annual_corr_models, BASINS, \
             if show_plots:
                 plt.show()    
         
-        
+    plt.close(fig)
     #plt.close()
 
 def _create_basin_plot(runids, runkeys, mean_count, annual_count_obs, BASINS, \
@@ -782,27 +783,18 @@ def _create_basin_plot(runids, runkeys, mean_count, annual_count_obs, BASINS, \
             ind = np.arange(len([basin]))
             ind_runid = np.arange(len(runids))
             run_labels = []; run_colour = []; run_number = []; run_resol =[]
-            b_corr_tc = []; b_corr_hur = []
+            basin_count = []
             for i, runid in enumerate(runids):
                 runkey = runkeys[i]
                 resol = resols[i]
                 runids = [r for r in runids]
                 if ace:
-#                    basin_corr_tc = [annual_corr_models[runkey][(bas, 'tc','ace')][0] for ib1, bas in enumerate([basin])]
-#                    basin_corr_hur = [annual_corr_models[runkey][(bas, 'hur','ace')][0] for ib1, bas in enumerate([basin])]
-                    basin_corr_tc = annual_corr_models[runkey][(basin, 'tc','ace')][0]
-                    basin_corr_hur = annual_corr_models[runkey][(basin, 'hur','ace')][0]
+                    count = mean_count[(runkey, 'ace', basin)]
+                    basin_count.append(count)
+
                 else:
-#                    basin_corr_tc = [annual_corr_models[runkey][(bas, 'tc')][0] for ib1, bas in enumerate([basin])]
-#                    basin_corr_hur = [annual_corr_models[runkey][(bas, 'hur')][0] for ib1, bas in enumerate([basin])]
-                    basin_corr_tc = annual_corr_models[runkey][(basin, 'tc')][0]
-                    basin_corr_hur = annual_corr_models[runkey][(basin, 'hur')][0]
-                b_corr_tc.append(basin_corr_tc)
-                b_corr_hur.append(basin_corr_hur)
-                #if run['ensemble_member'] != '':
-                #    run_labels.append(run['ensemble_member'])
-                #else:
-                #    run_labels.append(run['runkey'])
+                    basin_count.append(mean_count[(runkey,basin)])
+
                 run_labels.append(runkey)
 
                 run_colour.append(colour_runid[i])
@@ -810,23 +802,19 @@ def _create_basin_plot(runids, runkeys, mean_count, annual_count_obs, BASINS, \
                 #print(runid)
                 #print run
                 run_resol.append(resol)
-            #print len(run_colour), ind_runid
-            #print 'b_corr_tc ',b_corr_tc
 
-            ax.barh(ind_runid, np.asarray(b_corr_tc), width, color = run_colour, alpha=0.5)
-            ax.barh(ind_runid+width, np.asarray(b_corr_hur), width, \
-                       color=run_colour)
+            ax.barh(ind_runid, np.asarray(basin_count), width, color = run_colour, alpha=0.5)
             
             #ax.set_yticks(ind+width*nbars/2)
             #ax.set_yticks(ind_runid)
             plt.yticks(ind_runid+width, run_number)
             #ax.set_yticklabels( (run_labels) )
-            plt.xlim(-0.2, 1)
+            plt.xlim(0, 60)
             ax.set_ylim(ind_runid.min(), ind_runid.max()+1)
             if ace:
-                ax.set_xlabel('ACE correlation \n\n')
+                ax.set_xlabel('ACE count \n\n')
             else:
-                ax.set_xlabel('Frequency correlation \n\n')
+                ax.set_xlabel('Frequency count \n\n')
             ax2 = ax.twinx()
             plt.yticks(ind_runid+width)
             ax2.set_ylim(ind_runid.min(), ind_runid.max()+1)
@@ -834,12 +822,12 @@ def _create_basin_plot(runids, runkeys, mean_count, annual_count_obs, BASINS, \
             #ax2.set_yticks(ind_runid)
             #plt.yticks(ind_runid+width, run_labels, fontsize='small')
             #plt.gca().invert_yaxis()
-            plt.plot([-0.2,1], [ind_runid.max()-2, ind_runid.max()-2], 'black')
+            plt.plot([0, 60], [ind_runid.max()-2, ind_runid.max()-2], 'black')
             plt.legend(bbox_to_anchor=(1.0, 1.), loc=2, borderaxespad=-0.0, fontsize='small')
             if ace:
-                plt.title('TC ACE correlation - '+BASIN_NAME[ib]+'('+basin+')')
+                plt.title('ACE count - '+BASIN_NAME[basin]+'('+basin+')')
             else:
-                plt.title('TC frequency correlation - '+BASIN_NAME[ib]+'('+basin+')')
+                plt.title('Frequency count - '+BASIN_NAME[basin]+'('+basin+')')
             fig.subplots_adjust(bottom=0.1, left=0.1, right=0.73, top=0.94, wspace=0.2, hspace=0.24)
             
             if ace:
@@ -849,7 +837,7 @@ def _create_basin_plot(runids, runkeys, mean_count, annual_count_obs, BASINS, \
             plt.savefig(plot_filename)
             if show_plots:
                 plt.show()    
-        
+    plt.close(fig)
 
 def tc_driver(runs, years_hurdat, years_model, plot_basedir, HURDAT_DATA_BASEDIR, do_metric=False, show_plots = False, use_model_years=False, plot_hurdat = True, plot_all_years = True, paired = False, do_new = False, do_new_obs = False):
     '''
@@ -1058,7 +1046,7 @@ def main_metric(run):
 #    plot_basedir = '/data/local/hadom/maverick/plots/'
     plot_basedir = os.getcwd()
     # want hurdat years to encompass model years but can be longer, e.g. standard 20-30yr period
-    years_hurdat = np.arange(1979,2011)
+    years_hurdat = np.arange(1979,2021)
     years_model = np.arange(1979,2079)
     
     #print 'runs ',runs
@@ -1072,8 +1060,8 @@ def main_comparison(runs):
 #    plot_basedir = '/data/local/hadom/maverick/plots/'
     plot_basedir = os.getcwd()
     # want hurdat years to encompass model years but can be longer, e.g. standard 20-30yr period
-    years_hurdat = np.arange(1979,2011)
-    years_model = np.arange(1979,2011)
+    years_hurdat = np.arange(1979,2021)
+    years_model = np.arange(1979,2021)
     
     #print 'runs ',runs
     #print run['runid']

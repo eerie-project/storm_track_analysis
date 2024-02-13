@@ -100,7 +100,7 @@ def monthly_variability_with_obs(storms, years, months, runid_info, fontsize = 1
                )
 
     fig.subplots_adjust(bottom=0.07, left=0.06, right=0.95, top=0.90, wspace=0.14, hspace=0.4)
-
+    plt.close(fig)
 
 def storm_tracks(storms, years, months, basin, title, fig, ax, algorithm, hemi, genesis=False, lysis=False, max_intensity=False, warmcore = False, yoff=0., fontsize = 12):
     """ 
@@ -1000,7 +1000,7 @@ def do_track_density_bias(runid_info, storms, years, plot_dir, months_nh, months
     plt.savefig(figname)
     plt.close()
 
-def do_mslp_wspeed(storms, runid_info, plot_dir, basins = ['nh'], do_obs = False, keys = [], years_obs=[]):
+def do_mslp_wspeed(storms, runid_info, plot_dir, basins = ['nh'], do_obs = False, keys = [], years_obs=[], use_925=False):
 
     fig = plt.figure(figsize=[9,10], dpi=100)
     if len(basins) == 1:
@@ -1012,24 +1012,29 @@ def do_mslp_wspeed(storms, runid_info, plot_dir, basins = ['nh'], do_obs = False
         ax = fig.add_subplot(ny,nx,ib+1)
         i = 0
         if do_obs:
-            obs_storms = ts_obs.load_data.load_data(basin=basin)       
+            obs_storms = ts_obs.load_data.load_data(basin=basin)  
+            print('filter obs storms for mslp-wind')
             obs_storms_tsandup = filter_obs(obs_storms, storm_types = ['TS', 'HU', 'MH'])
+            print('fit obs storms for mslp-wind')
             x_fit_obs, y_fit_obs = tc_intensity.calculate_fit_obs(obs_storms, basin = basin)
             tc_intensity.plot_obs_mslp_wspeed(obs_storms, ax, x_fit=x_fit_obs, y_fit = y_fit_obs, basin = basin, linewidth = 1)
+            del(obs_storms)
+            del(obs_storms_tsandup)
 
+        print('do model storms for mslp-wind')
         for ir, runid in enumerate(runid_info['model']):
             for algo in runid_info['algo_type'][ir:ir+1]:
                 key = keys[ir]
                 #print ('mslp_wspeed ',runid, algo)
                 storms_runid = storms[(runid, key)]
-                x_fit, y_fit = tc_intensity.calculate_fit_model(storms_runid, use_925 = False, basin = basin)
+                x_fit, y_fit = tc_intensity.calculate_fit_model(storms_runid, use_925 = use_925, basin = basin)
                 #print ('x_fit, y_fit ',x_fit, y_fit)
                 plt.title('')
-                tc_intensity.plot_model_mslp_wspeed(storms_runid, i, ax, x_fit=x_fit, y_fit=y_fit, label=runid+'-'+algo, use_925 = False, paired = False, basin = basin)
+                tc_intensity.plot_model_mslp_wspeed(storms_runid, i, ax, x_fit=x_fit, y_fit=y_fit, label=runid+'-'+algo, use_925 = use_925, paired = False, basin = basin)
                 i+=1
 
                 ax.legend(loc=3, fontsize='x-small')
-
+        del(storms_runid)
         tc_intensity.setup_mslp_windspeed_plot(ax, basin = basin, fig_no = ib+1)    
 
     fig.subplots_adjust(bottom=0.08, left=0.08, right=0.95, top=0.92, wspace=0.27, hspace=0.27)
@@ -1037,6 +1042,7 @@ def do_mslp_wspeed(storms, runid_info, plot_dir, basins = ['nh'], do_obs = False
     algos = '_'.join(runid_info['algo_type'])
     figname = os.path.join(plot_dir, models+'-'+algos+'_mslp_windspeed.png')
     plt.savefig(figname)
+    plt.close(fig)
 
 def do_size(storms, runid_info, plot_dir, basins = ['nh'], do_obs = False):
 
@@ -1073,6 +1079,7 @@ def do_size(storms, runid_info, plot_dir, basins = ['nh'], do_obs = False):
     algos = '_'.join(runid_info['algo_type'])
     figname = os.path.join(plot_dir, models+'-'+algos+'_mslp_size.png')
     plt.savefig(figname)
+    plt.close(fig)
 
 def plot_radius_max_wind_vmax(storms, runid_info, plot_dir, do_radmax = True, basins = ['nh'], keys = []):
     '''
@@ -1132,12 +1139,16 @@ def plot_radius_max_wind_vmax(storms, runid_info, plot_dir, do_radmax = True, ba
         figname = os.path.join(plot_dir, models+'-'+algos+'_size_rad8_vmax.png')
 
     plt.savefig(figname)
+    plt.close(fig)
 
-def plot_interannual_variability(years, runid_info, plot_dir, storedir, months_nh, months_sh, basins = ['na'], keys = [], coupled = True):
+def plot_interannual_variability(years, runid_info, plot_dir, storedir, months_nh, months_sh, basins = ['na'], keys = [], coupled = True, years_obs=''):
     '''
     Calculate interannual variability
     '''
-    years_hurdat = np.arange(1980, 2015)
+    if years_obs == '':
+        years_hurdat = np.arange(1980, 2015)
+    else:
+        years_hurdat = years_obs
     colour_runid = ['red', 'blue', 'green', 'cyan', 'orange', 'purple']
     colour_obs = ['black', 'gray']
     nensemble = 1
@@ -1307,6 +1318,7 @@ def do_tc_intensity(storms, runid_info, plot_dir, basins = ['nh'], do_obs = Fals
     algos = '_'.join(runid_info['algo_type'])
     figname = os.path.join(plot_dir, models+'-'+algos+'_pie_intensity_'+variable+'.png')
     plt.savefig(figname)
+    plt.close(fig)
 
 def do_seasonal_cycle(storms, years, runid_info, plot_dir, keys = [], years_obs=[]):
     months = range(1,13)
@@ -1434,6 +1446,7 @@ def do_piechart(storms, years, runid_info, plot_dir, tc_thres_mslp = False, tc_t
     algos = '_'.join(runid_info['algo_type'])
     figname = os.path.join(plot_dir, models+'-'+algos+'_piechart_basinfreq'+file_ending+'.png')
     plt.savefig(figname)
+    plt.close(fig)
 
 def do_intensification_pdf(storms, runid_info, plot_dir, basins = ['nh'], do_obs = False, variable = '10mwind', keys = [], years_obs = []):
 
@@ -1486,6 +1499,7 @@ def do_intensification_pdf(storms, runid_info, plot_dir, basins = ['nh'], do_obs
     algos = '_'.join(runid_info['algo_type'])
     figname = os.path.join(plot_dir, models+'-'+algos+'_'+variable+'_intensification_pdf.png')
     plt.savefig(figname)
+    plt.close(fig)
 
 def do_intensification_24h_pdf(storms, runid_info, plot_dir, basins = ['nh'], do_obs = False, variable = '10mwind', keys = [], years_obs = []):
 
@@ -1542,6 +1556,7 @@ def do_intensification_24h_pdf(storms, runid_info, plot_dir, basins = ['nh'], do
     algos = '_'.join(runid_info['algo_type'])
     figname = os.path.join(plot_dir, models+'-'+algos+'_'+variable+'_intensification_24h_pdf.png')
     plt.savefig(figname)
+    plt.close(fig)
 
 def do_1D_pdf(storms, runid_info, plot_dir, basins = ['nh'], do_obs = False, variable = '10mwind', keys = []):
 
@@ -1600,6 +1615,7 @@ def do_1D_pdf(storms, runid_info, plot_dir, basins = ['nh'], do_obs = False, var
     algos = '_'.join(runid_info['algo_type'])
     figname = os.path.join(plot_dir, models+'-'+algos+'_'+variable+'_pdf.png')
     plt.savefig(figname)
+    plt.close(fig)
 
 def do_2D_pdf(storms, runid_info, plot_dir, basins = ['nh'], do_obs = False, variable_x = 'mslp', variable_y = 'latitude', keys = []):
 
@@ -1664,6 +1680,7 @@ def do_2D_pdf(storms, runid_info, plot_dir, basins = ['nh'], do_obs = False, var
         algos = '_'.join(runid_info['algo_type'])
         figname = os.path.join(plot_dir, models+'-'+algos+'_'+basin+'_2d_pdf.png')
         plt.savefig(figname)
+    plt.close(fig)
 
 def plot_tc_properties(runid_info, storms, years, storedir, do_meanstate, do_variability, years_obs, plot_dir, keys, months_nh, months_sh, coupled=False):
     '''
@@ -1676,7 +1693,7 @@ def plot_tc_properties(runid_info, storms, years, storedir, do_meanstate, do_var
 
     time_var_start = time.perf_counter()
     if do_variability:
-        plot_interannual_variability(years, runid_info, plot_dir, storedir, months_nh, months_sh, keys = keys, coupled=coupled)
+        plot_interannual_variability(years, runid_info, plot_dir, storedir, months_nh, months_sh, keys = keys, coupled=coupled, years_obs=years_obs)
         plt.close('all')
     time_var = time.perf_counter()
     print('Variability took ',(time_var - time_var_start),' seconds')

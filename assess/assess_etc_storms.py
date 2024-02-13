@@ -42,8 +42,8 @@ import time
 
 # some example inputs for the plotting
 months = [1,2,3,4,5,6,7,8,9,10,11,12]
-months_nh = [5,6,7,8,9,10,11]
-months_sh = [10,11,12,1,2,3,4,5]
+months_nh = [11,12,1,2,3]
+months_sh = [5,6,7,8,9]
 
 YEARS_OBS = range(1979, 2019)
 

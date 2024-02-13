@@ -77,6 +77,7 @@ BASIN_NAME = {'na': 'North Atlantic',
               'sh': 'Southern Hemisphere',
               'ena': 'E NAtlantic',
               'wna': 'W NAtlantic',
+              'sa': 'South Atlantic',
               None: 'Global'
               }
 #: Corresponding full basin names for each abbreviation
@@ -92,6 +93,7 @@ BASIN_NAME_SHORT = {'na': 'NA',
               'sh': 'SH',
               'ena': 'ENA',
               'wna': 'WNA',
+              'sa': 'SA',
               None: 'Global'
               }
 
