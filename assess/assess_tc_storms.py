@@ -45,7 +45,7 @@ months = [1,2,3,4,5,6,7,8,9,10,11,12]
 months_nh = [5,6,7,8,9,10,11]
 months_sh = [10,11,12,1,2,3,4,5]
 
-YEARS_OBS = range(1979, 2025)
+YEARS_OBS = np.arange(1979, 2025)
 
 def calc_data_freq(storms):
     '''
@@ -174,6 +174,7 @@ def work(runid_info, yearstart, yearend, yearsplot, dir_in_base, plot_dir = '', 
         years_obs_end = years[-1]
     years_obs = np.arange(years_obs_start, years_obs_end)
     #years_obs = np.arange(YEARS_OBS[0], YEARS_OBS[-1])
+    years_obs = YEARS_OBS
     print('years_obs ',years_obs)
 
     storms = {}; no_years_with_storms = {}
