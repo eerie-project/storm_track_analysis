@@ -402,7 +402,7 @@ def _create_interann_plot(runids, runkeys, resols, annual_count_obs, \
         #print 'save fig ',plot_filename
         if show_plots:
             plt.show()    
-    plt.close(fig)
+        plt.close(fig)
 
 def calculate_correlation_years(years_model, data_model, years_obs, data_obs):
     #print years_model[0], years_model[-1]

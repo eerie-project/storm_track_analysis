@@ -351,8 +351,8 @@ def storm_density_plot(cube, years, fig, ax, basin=None, title = '', fontsize = 
 #                       cmap='Reds')
     plt.gca().coastlines() 
     gl = ax.gridlines(draw_labels=True)
-    gl.xlabels_top = False
-    gl.ylabels_right = False
+    gl.top_labels = False
+    gl.right_labels = False
     #gl.top_labels = False
     #gl.right_labels = False
     gl.yformatter = LATITUDE_FORMATTER
@@ -1145,10 +1145,11 @@ def plot_interannual_variability(years, runid_info, plot_dir, storedir, months_n
     '''
     Calculate interannual variability
     '''
-    if years_obs == '':
+    if years_obs == '' or years_obs == []:
         years_hurdat = np.arange(1980, 2015)
     else:
         years_hurdat = years_obs
+
     colour_runid = ['red', 'blue', 'green', 'cyan', 'orange', 'purple']
     colour_obs = ['black', 'gray']
     nensemble = 1
@@ -1168,6 +1169,7 @@ def plot_interannual_variability(years, runid_info, plot_dir, storedir, months_n
     obs_tc_pickle_dir = storedir.format(obs_ds, '')
     if not os.path.exists(obs_tc_pickle_dir):
         os.makedirs(obs_tc_pickle_dir)
+    print('plot interann, years_hurdat ',years_hurdat, years_obs)
     obs_tc_pickle_file = os.path.join(obs_tc_pickle_dir, obs_ds+'_'+str(years_hurdat[0])+'-'+str(years_hurdat[-1])+'.pkl')
     if not os.path.exists(obs_tc_pickle_file):
         print('calculating obs data')
