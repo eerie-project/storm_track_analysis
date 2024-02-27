@@ -1,6 +1,16 @@
 """
 Calculates Hart phase space parameters and STJ, adds these parameters to existing tracks, and archives a new version of the track file to MASS
 
+Read the wind speed and abs(u) running meaned files, locate the STJ (sub-tropical jet).
+Add this information into the track files (csv format at this point), lat_STJ_{NH/SH} is the latitude, and ET 0/1 is an indicator of whether the storm is extra-tropical (0=no).
+
+Use the zg composite snapshots from the make_composites.py step, and use these to calculate the Hart phase space parameters VTL, VTU and B.
+Add these to the csv track file
+
+Use the original netcdf track file to make a copy, and then append these extra variables into that new netcdf file.
+
+Archive this file to MASS is possible.
+
 """
 
 from netCDF4 import Dataset
@@ -19,6 +29,7 @@ from copy import copy
 from CPyS import compute_CPS_parameters
 from CPyS import STJ
 
+# Extra variables to add to track file. 
 extra_variables = ['lat_STJ_NH', 'lat_STJ_SH', 'ET', 'theta', 'B', 'VTL', 'VTU']
 fname_out = '{}a.{}{}_{}.{}'
 
