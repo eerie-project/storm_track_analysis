@@ -1,5 +1,13 @@
 """
-Create composites based on tracks input and variables required
+Create composites based on tracks input and variables required.
+Based on code from Stella Bourdin and Bourdin et al. (2022), GMD
+
+Reads in (netcdf) format of TC track files, from either TempestExtremes or TRACK (note in netcdf these are essentially the same format), and converts to csv. Note that TRACK has separate NH, SH hemisphere files.
+
+Uses zg at 3 levels, here likely 925, 600, 250 hPa (data already extracted and available in netcdf format).
+Uses TempestExtremes NodeFileCompose to calculate composites of zg at these 3 levels, using the TC tracks as the centre of the composite. Calculated on radial grid with a resolution of 0.25 degrees.
+
+The composites are written out with variable names snap_zg_{level}, one file per level with all the composites in order of the tracks in the track file
 
 """
 
